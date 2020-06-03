@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="css/login.css" />
+<style type="text/css">
+div{
+height:500px;
+}
+.text{
+margin:40px auto 4px auto;
+}
+.button{
+margin:20px auto 20px auto;
+}
+</style>
+<meta charset="UTF-8">
+<title>注册界面</title>
+</head>
+<body>
+<div style="display: block;">
+<h3>用户注册</h3>
+<form action="register.jsp" method="post" onsubmit="return check();">
+<input class="text" type="text" placeholder="昵称" id="name" name="name" maxlength='11'>
+<input class="text" type="text" placeholder="账号" id="id" name="id" maxlength='11'>
+<input class="text" type="password" placeholder="密码" id="password" name="password" maxlength='11'>
+<input class="button" type="submit" value="注册">
+</form>
+<form action="login.jsp"><input class="button" type="submit" value="返回登录"></form>
+</div>
+
+<script type="text/javascript">
+function check() {
+	var id = document.getElementById("id").value;
+	var name = document.getElementById("name").value;
+	var password = document.getElementById("password").value;
+	if(id == "") {
+		alert("账号不能为空!");
+		return false;
+	} else if(password == "") {
+		alert("密码不能为空!");
+		return false;
+	} else if(name == ""){
+		alert("昵称不能为空!");
+		return false;
+	}
+	return true;
+}
+</script>
+</body>
+</html>
