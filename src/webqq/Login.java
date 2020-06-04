@@ -51,7 +51,7 @@ public class Login {
 			}
 			rs.last();
 			if(rs.getRow()==1) {
-				db.connect();
+				db.disconnect();
 				return true;
 			}
 		} catch (SQLException e) {

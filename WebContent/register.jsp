@@ -4,6 +4,9 @@
 <!DOCTYPE html>
 <html>
 <head>
+<%
+	request.setCharacterEncoding("UTF-8");
+%>
 <link rel="stylesheet" href="css/login.css" />
 <style type="text/css">
 div{

@@ -9,6 +9,9 @@
 div{
 height:430px;
 }
+.fail{
+height:180px;
+}
 span{
 	display:inline-block;
 	width:150px;
@@ -46,7 +49,7 @@ if(login.queryId()){
 		<%
 	}else{
 		%>
-		<div>
+		<div class="fail">
 		<h3>密码错误！</h3>
 		<form action="login.jsp">
 		<input type="hidden" name="id" value=<%=id%>>
@@ -58,7 +61,7 @@ if(login.queryId()){
 	}
 }else{
 	%>
-	<div>
+	<div class="fail">
 	<h3>用户不存在！</h3>
 	<form action="login.jsp">
 	<input type="hidden" name="id" value=<%=id%>>
