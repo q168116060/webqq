@@ -11,7 +11,6 @@ height:200px;
 }
 </style>
 <meta charset="UTF-8">
-<% request.setCharacterEncoding("utf-8"); %>
 <title>注册处理页面</title>
 </head>
 <body>
@@ -19,12 +18,12 @@ height:200px;
 String id = request.getParameter("id");
 String name = request.getParameter("name");
 String password = request.getParameter("password");
-System.out.print(id+name+password);
+
 Register register = new Register(id,name,password);
 Boolean i = register.insert();
 if(i){
 %>
-<div style="display: block;">
+<div>
 <h3>注册成功！</h3>
 <form action="login.jsp" method="post">
 <input type="hidden" name="id" value=<%=id%>>

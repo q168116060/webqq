@@ -3,7 +3,7 @@ package webqq;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class Register {
+public class Login {
 
 	String id = null;
 	String name = null;
@@ -12,18 +12,22 @@ public class Register {
 	ResultSet rs = null;
 	DbProcess db = new DbProcess();
 	
-	public Register(String id,String name,String password) {
+	public String getName() {
+		return name;
+	}
+	
+	public Login(String id,String password) {
 		this.id=id;
-		this.name=name;
 		this.password=password;
 	}
+	
 	public Boolean queryId() {
 		db.connect();
 		sql = "select id from user where id = "+id+";";
 		rs = db.executeQuery(sql);
 		try {
 			rs.last();
-			if(rs.getRow()==0) {
+			if(rs.getRow()==1) {
 				db.disconnect();
 				return true;
 			}
@@ -37,14 +41,23 @@ public class Register {
 	}
 	
 	
-	public Boolean insert() {
-		if(this.queryId()) {
-			db.connect();
-			sql = "insert into user values('"+id+"','"+name+"','"+password+"');";
-			int count = db.executeUpdate(sql);
-			if(count == 1)
-				db.disconnect();
+	public Boolean queryName() {
+		db.connect();
+		sql = "select name from user where id = '"+id+"' AND password = '"+password+"';";
+		rs = db.executeQuery(sql);
+		try {
+			while(rs.next()) {
+				name=rs.getString("name");
+			}
+			rs.last();
+			if(rs.getRow()==1) {
+				db.connect();
 				return true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			db.disconnect();
+			return false;
 		}
 		db.disconnect();
 		return false;

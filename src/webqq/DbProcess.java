@@ -10,7 +10,7 @@ public class DbProcess{
 
 
 	String userMySql="root"; 
-	String passwordMySql="111";
+	String passwordMySql="1111";
 	String urlMySql = "jdbc:mysql://localhost:3306/webqq?user="
 			+userMySql+"&password="+passwordMySql + "&useUnicode=true&characterEncoding=gbk";
 	
@@ -58,13 +58,13 @@ public class DbProcess{
 	public ResultSet executeQuery(String sql) {
 		try {
 			System.out.println("executeQuery(). sql = " + sql);
-			
 			PreparedStatement pstm = connection.prepareStatement(sql);
 			// ÷¥––≤È—Ø
 			rs = pstm.executeQuery();
 		} 
 		catch(SQLException ex) { 
 			ex.printStackTrace();
+			this.disconnect();
 		}
 		return rs;
 	}
@@ -83,7 +83,7 @@ public class DbProcess{
 			count = stmt.executeUpdate(sql);
 		} 
 		catch(SQLException ex) { 
-			System.err.println(ex.getMessage());		
+			System.err.println(ex.getMessage());
 		}
 		return count;
 	}

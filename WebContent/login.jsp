@@ -23,9 +23,9 @@ if(password == null){
 	password = "";
 }
 %>
-<div style="display: block;">
+<div>
 <h3>用户登录</h3>
-<form action="" onsubmit="return check();">
+<form action="loginDispose.jsp" method="post" onsubmit="return check();">
 <input class="text" type="text" placeholder="用户名" id="id" name="id" maxlength='11' value=<%=id%>>
 <input class="text" type="password" placeholder="密码" id="password" name="password" maxlength='11' value=<%=password%>>
 <input class="button" id="loginBtn" type='submit' value='登录'></input>
