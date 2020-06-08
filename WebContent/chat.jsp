@@ -18,6 +18,22 @@
 	background: url(img/a.png) center;
 	background-size: cover;
 }
+
+#emojidiv {
+	display: none;
+	position: absolute;
+	top: -105px;
+	left: 82%;
+	padding: 0px;
+	border: 0px;
+	background-color: white;
+	z-index: 1002;
+	overflow: auto;
+}
+
+a {
+	text-decoration: none;
+}
 </style>
 <script type="text/javascript">
 	window.onload = function() {
@@ -48,7 +64,7 @@
 				e.preventDefault();
 			}
 		}
-
+		
 		
 	}
 </script>
@@ -87,16 +103,66 @@
 			</ul>
 		</div>
 
-		<div class="box" style="display:none;">
+		<div class="box" style="display: none;">
 			<div id="main"></div>
 			<div class="box-ft">
-				<span id="fileico"></span>
-				<div class="text" contenteditable="true" id="" ></div>
-				<span id="emojiico"></span>
+				<a href="JavaScript:void(0)" onclick="sendimage()"> <span
+					id="fileico"></span>
+				</a> <input type="file" id="imageFile" style="display: none" />
+				<div class="text" contenteditable="true" id=""></div>
+				<div>
+
+					<div id="emojidiv">
+						<table border="1">
+							<tr>
+								<td><a href="javascript:void(0)"
+									onclick="insertemoji(this)">😀</a></td>
+								<td><a href="javascript:void(0)"
+									onclick="insertemoji(this)">😃</a></td>
+								<td><a href="javascript:void(0)"
+									onclick="insertemoji(this)">😄</a></td>
+								<td><a href="javascript:void(0)"
+									onclick="insertemoji(this)">😁</a></td>
+							</tr>
+							<tr>
+								<td><a href="javascript:void(0)"
+									onclick="insertemoji(this)">😆</a></td>
+								<td><a href="javascript:void(0)"
+									onclick="insertemoji(this)">😅</a></td>
+								<td><a href="javascript:void(0)"
+									onclick="insertemoji(this)">🤣</a></td>
+								<td><a href="javascript:void(0)"
+									onclick="insertemoji(this)">😂</a></td>
+							</tr>
+							<tr>
+								<td><a href="javascript:void(0)"
+									onclick="insertemoji(this)">🙂</a></td>
+								<td><a href="javascript:void(0)"
+									onclick="insertemoji(this)">🙃</a></td>
+								<td><a href="javascript:void(0)"
+									onclick="insertemoji(this)">😉</a></td>
+								<td><a href="javascript:void(0)"
+									onclick="insertemoji(this)">😊</a></td>
+							</tr>
+							<tr>
+								<td><a href="javascript:void(0)"
+									onclick="insertemoji(this)">😲</a></td>
+								<td><a href="javascript:void(0)"
+									onclick="insertemoji(this)">😦</a></td>
+								<td><a href="javascript:void(0)"
+									onclick="insertemoji(this)">😎</a></td>
+								<td><a href="javascript:void(0)"
+									onclick="insertemoji(this)">😌</a></td>
+							</tr>
+						</table>
+					</div>
+					<a href="JavaScript:void(0)" onclick="sendemoji()"> <span
+						id="emojiico"></span>
+					</a>
+				</div>
 				<button id="sendBtn" onclick="sendMessage()">发送</button>
 			</div>
 		</div>
-
 	</div>
 
 
@@ -109,6 +175,10 @@ var ws = new WebSocket("ws://localhost:8080/webqq/WebSocket/"+id);
 			ws.send("<%=request.getParameter("name")%>");
 		}
 
+		ws.onclose = function(){
+			window.alert("您已掉线，请检查网络，重启客户端!");
+		}
+		
 		ws.onmessage = function(message) {
 			var json = JSON.parse(message.data);
 			if (json.message[0].type == "0") {
@@ -132,7 +202,7 @@ var ws = new WebSocket("ws://localhost:8080/webqq/WebSocket/"+id);
 				var box_bd = div1.getElementsByClassName("box-bd")[0];
 				box_bd.innerHTML = box_bd.innerHTML
 						+ "<div class=\"system\"><p class=\"message_system\"><span class=\"content\">"
-						+ json.message[0].message + "</span></p></div>"
+						+ json.message[0].message + "</span></p></div>";
 				var message_list = document.getElementById("message");
 				var message_list_li = message_list.getElementsByTagName("li")[0];
 				var message_list_li_p = message_list_li
@@ -154,21 +224,27 @@ var ws = new WebSocket("ws://localhost:8080/webqq/WebSocket/"+id);
 				if(json.message[0].receive == "grouptext"){
 					var div = document.getElementById("group");
 					var box_bd = div.getElementsByClassName("box-bd")[0];
-					if(json.message[0].name == name){
+					if(json.message[0].name == "<%=request.getParameter("name")%>"){
 						box_bd.innerHTML = box_bd.innerHTML+"<div class=\"message-box\">\r\n" + 
 						"<div class=\"my message\"><img class=\"avatar\" src=\"img/a.png\" alt=\"\" />\r\n" + 
 						"<div class=\"content\"><div class=\"bubble\"><div class=\"bubble_cont\">"+
 						json.message[0].message+
 						"</div></div></div>\r\n" + 
-						"</div></div>"
+						"</div></div>";
 					}else{
 						box_bd.innerHTML = box_bd.innerHTML+"<div class=\"message-box\"><div class=\"other message\"><img class=\"avatar\" src=\"img/a.png\" alt=\"\" />\r\n" + 
 						"<div class=\"content\"><div class=\"nickname\">"+
 						json.message[0].name+
 						"</div><div class=\"bubble\"><div class=\"bubble_cont\">"+
 						json.message[0].message+
-						"</div></div></div></div></div>"
+						"</div></div></div></div></div>";
 					}
+					
+					var message_list = document.getElementById("message");
+					var message_list_li = message_list.getElementsByTagName("li")[0];
+					var message_list_li_p = message_list_li
+							.getElementsByClassName("message-content")[0];
+					message_list_li_p.innerHTML = json.message[0].message;
 					setscroll(div);
 				}else {
 					var receive = "<%=request.getParameter("id")%>"+"text";
@@ -188,7 +264,7 @@ var ws = new WebSocket("ws://localhost:8080/webqq/WebSocket/"+id);
 						var div1 = document.getElementById(json.message[0].id+"div");
 						var box_bd = div1.getElementsByClassName("box-bd")[0];
 						box_bd.innerHTML = box_bd.innerHTML+"<div class=\"othermessage\"><div><img class=\"avatar\" src=\"img/a.png\" /></div><div><div class=\"left-triangle\"></div><span>"
-						+json.message[0].message+"</span></div>"
+						+json.message[0].message+"</span></div>";
 						
 						var message_list_li_p = document.getElementById(json.message[0].id+"message");
 						if(message_list_li_p == null){
@@ -212,7 +288,7 @@ var ws = new WebSocket("ws://localhost:8080/webqq/WebSocket/"+id);
 						var div1 = document.getElementById(receive+"div");
 						var box_bd = div1.getElementsByClassName("box-bd")[0];
 						box_bd.innerHTML = box_bd.innerHTML+"<div class=\"mymessage\"><div><img class=\"avatar\" src=\"img/a.png\" /></div><div><div class=\"right-triangle\"></div><span>"
-						+json.message[0].message+"</span></div>"
+						+json.message[0].message+"</span></div>";
 						
 						var message_list_li_p = document.getElementById(receive+"message");
 						if(message_list_li_p == null){
@@ -246,7 +322,7 @@ var ws = new WebSocket("ws://localhost:8080/webqq/WebSocket/"+id);
 							")</h3></div>\r\n" + 
 					"<div class=\"box-bd\">\r\n" + 
 					"</div>\r\n" + 
-					"</div>"
+					"</div>";
 				}else{
 					var box_hd = div1.getElementsByClassName("box-hd")[0];
 					var h3 = box_hd.getElementsByTagName("h3")[0];
@@ -256,7 +332,7 @@ var ws = new WebSocket("ws://localhost:8080/webqq/WebSocket/"+id);
 				var box_bd = div1.getElementsByClassName("box-bd")[0];
 				box_bd.innerHTML = box_bd.innerHTML
 						+ "<div class=\"system\"><p class=\"message_system\"><span class=\"content\">"
-						+ json.message[0].message + "</span></p></div>"
+						+ json.message[0].message + "</span></p></div>";
 				var message_list = document.getElementById("message");
 				var message_list_li = message_list.getElementsByTagName("li")[0];
 				var message_list_li_p = message_list_li
@@ -273,72 +349,208 @@ var ws = new WebSocket("ws://localhost:8080/webqq/WebSocket/"+id);
 				}
 				setscroll(div1);
 
+			}else if(json.message[0].type == "3"){
+				if(json.message[0].receive == "grouptext"){
+					var div = document.getElementById("group");
+					var box_bd = div.getElementsByClassName("box-bd")[0];
+					if(json.message[0].name == "<%=request.getParameter("name")%>"){
+						box_bd.innerHTML = box_bd.innerHTML+"<div class=\"message-box\">\r\n" + 
+						"<div class=\"my message\"><img class=\"avatar\" src=\"img/a.png\" alt=\"\" />\r\n" + 
+						"<div class=\"content\"><div class=\"bubble\"><div class=\"bubble_cont\"><img src=\""+
+						json.message[0].message+"\"/>"+
+						"</div></div></div>\r\n" + 
+						"</div></div>";
+					}else{
+						box_bd.innerHTML = box_bd.innerHTML+"<div class=\"message-box\"><div class=\"other message\"><img class=\"avatar\" src=\"img/a.png\" alt=\"\" />\r\n" + 
+						"<div class=\"content\"><div class=\"nickname\">"+
+						json.message[0].name+
+						"</div><div class=\"bubble\"><div class=\"bubble_cont\"><img src=\""+
+						json.message[0].message+"\"/>"+
+						"</div></div></div></div></div>";
+					}
+					
+					var message_list = document.getElementById("message");
+					var message_list_li = message_list.getElementsByTagName("li")[0];
+					var message_list_li_p = message_list_li
+							.getElementsByClassName("message-content")[0];
+					message_list_li_p.innerHTML = "[图片]";
+					setscroll(div);
+				}else {
+					var receive = "<%=request.getParameter("id")%>"+"text";
+					if(receive == json.message[0].receive){
+						var box = document.getElementsByClassName("box")[0];
+						var div = box.getElementsByTagName("div")[0];
+						var div1 = document.getElementById(json.message[0].id+"div");
+						if (div1 == null) {
+							div.innerHTML = div.innerHTML+"<div id=\""+json.message[0].id+"div\" class=\"chat\" style=\"display:none;\">\r\n" + 
+							"<div class=\"box-hd\"><h3>"+
+							json.message[0].name+
+									"</h3></div>\r\n" + 
+							"<div class=\"box-bd\">\r\n" + 
+							"</div>\r\n" + 
+							"</div>";
+						}
+						var div1 = document.getElementById(json.message[0].id+"div");
+						var box_bd = div1.getElementsByClassName("box-bd")[0];
+						box_bd.innerHTML = box_bd.innerHTML+"<div class=\"othermessage\"><div><img class=\"avatar\" src=\"img/a.png\" /></div>"+
+						"<div><div class=\"left-triangle\"></div><span><img style=\"max-width: 350px;max-height: 240px;\" src=\""+
+						json.message[0].message+"\"/>"+"</span></div>";
+						
+						var message_list_li_p = document.getElementById(json.message[0].id+"message");
+						if(message_list_li_p == null){
+							var message_list = document.getElementById("message");
+							var message_list_ul = message_list.getElementsByTagName("ul")[0];
+							message_list_ul.innerHTML += "<li class=\"user\" onclick=\"setdisplay(this)\"><div>\r\n" + 
+							"<img class=\"avatar\" src=\"img/a.png\" alt=\"\" />\r\n" + 
+							"<p class=\"message-name\">"+
+							json.message[0].name+"</p>\r\n" + 
+							"<p class=\"message-content\" id=\""+
+							json.message[0].id+"message\">"+
+							"[图片]"+"</p></div></li>";
+						}else{
+							message_list_li_p.innerHTML ="[图片]";
+						}
+						setscroll(div1);
+						
+					}else if(json.message[0].name == "<%=request.getParameter("name")%>") {
+						var receive = json.message[0].receive;
+						receive = receive.substring(0, receive.length - 4);
+						var div1 = document.getElementById(receive + "div");
+						var box_bd = div1.getElementsByClassName("box-bd")[0];
+						box_bd.innerHTML = box_bd.innerHTML
+								+ "<div class=\"mymessage\"><div><img class=\"avatar\" src=\"img/a.png\" /></div><div><div class=\"right-triangle\"></div><span><img style=\"max-width: 350px;max-height: 240px;\" src=\""+
+								json.message[0].message+"\"/>"+ "</span></div>";
+
+						var message_list_li_p = document.getElementById(receive
+								+ "message");
+						if (message_list_li_p == null) {
+							var friend_list_li = document
+									.getElementById(receive + "friend");
+							var friend_list_li_p = friend_list_li
+									.getElementsByClassName("friend-name")[0];
+							var name = friend_list_li_p.innerHTML;
+							var message_list = document
+									.getElementById("message");
+							var message_list_ul = message_list
+									.getElementsByTagName("ul")[0];
+							message_list_ul.innerHTML += "<li class=\"user\" onclick=\"setdisplay(this)\"><div>\r\n"
+									+ "<img class=\"avatar\" src=\"img/a.png\" alt=\"\" />\r\n"
+									+ "<p class=\"message-name\">"
+									+ name
+									+ "</p>\r\n"
+									+ "<p class=\"message-content\" id=\""+
+							receive+"message\">"
+									+ "[图片]"
+									+ "</p></div></li>";
+						} else {
+							message_list_li_p.innerHTML = "[图片]";
+						}
+						setscroll(div1);
+					}
+
+				}
 			}
 		}
 
 		function sendMessage() {
 			var text = document.getElementsByClassName("text")[0];
-			var message = "{\"message\":[{\"type\":\"1\", \"message\":\""+text.innerHTML+
-				"\",\"name\":\""+name+"\",\"id\":\""+id+"\",\"receive\":\""+text.id+"\"}]}";
-			ws.send(message);
-			text.innerHTML="";
+			if (text.innerText != "") {
+				var message = "{\"message\":[{\"type\":\"1\", \"message\":\""
+						+ text.innerText + "\",\"name\":\"" + name
+						+ "\",\"id\":\"" + id + "\",\"receive\":\"" + text.id
+						+ "\"}]}";
+				ws.send(message);
+				text.innerHTML = "";
+			}
 		}
-		
+
 		function creatdiv(li) {
 			var box = document.getElementsByClassName("box")[0];
-			box.style="display:block;";
-			var div3 =document.getElementById("main");
+			box.style = "display:block;";
+			var div3 = document.getElementById("main");
 			var div = document.getElementsByClassName("chat");
-			for(var i=0;i<div.length;i++){
+			for (var i = 0; i < div.length; i++) {
 				div[i].style = "display:none;";
 			}
 			var li_id = li.id;
-			var id = li_id.substring(0,li_id.length-6);
-			var div1 = document.getElementById(id+"div");
+			var id = li_id.substring(0, li_id.length - 6);
+			var div1 = document.getElementById(id + "div");
 			if (div1 == null) {
 				var p = li.getElementsByTagName("p")[0];
-				div3.innerHTML = div3.innerHTML+"<div id=\""+id+"div\" class=\"chat\" style=\"display:block;\">\r\n" + 
-				"<div class=\"box-hd\"><h3>"+
-				p.innerHTML+
-						"</h3></div>\r\n" + 
-				"<div class=\"box-bd\">\r\n" + 
-				"</div>\r\n" + 
-				"</div>";
-			}else{
+				div3.innerHTML = div3.innerHTML
+						+ "<div id=\""+id+"div\" class=\"chat\" style=\"display:block;\">\r\n"
+						+ "<div class=\"box-hd\"><h3>" + p.innerHTML
+						+ "</h3></div>\r\n" + "<div class=\"box-bd\">\r\n"
+						+ "</div>\r\n" + "</div>";
+			} else {
 				div1.style = "display:block;";
 			}
-			var box_ft=document.getElementsByClassName("box-ft")[0];
+			var box_ft = document.getElementsByClassName("box-ft")[0];
 			var text_div = box_ft.getElementsByTagName("div")[0];
-			text_div.id = id+"text";
-			
-			
+			text_div.id = id + "text";
+
 		}
-		
-		function setdisplay(li){
+
+		function setdisplay(li) {
 			var box = document.getElementsByClassName("box")[0];
 			box.style = "display:block;";
 			var div = document.getElementsByClassName("chat");
-			for(var i=0;i<div.length;i++){
+			for (var i = 0; i < div.length; i++) {
 				div[i].style = "display:none;";
 			}
 			var p = li.getElementsByClassName("message-content")[0];
 			var p_id = p.id;
-			var id = p_id.substring(0,p_id.length-7);
-			var div1 = document.getElementById(id+"div");
-			if(div1 == null){
-				div1=document.getElementById("group");
+			var id = p_id.substring(0, p_id.length - 7);
+			var div1 = document.getElementById(id + "div");
+			if (div1 == null) {
+				div1 = document.getElementById("group");
 			}
 			div1.style = "display:block;";
-			var box_ft=document.getElementsByClassName("box-ft")[0];
+			var box_ft = document.getElementsByClassName("box-ft")[0];
 			var text_div = box_ft.getElementsByTagName("div")[0];
-			text_div.id = id+"text";
-			
+			text_div.id = id + "text";
+
 		}
-		
-		function setscroll(div){
+
+		function setscroll(div) {
 			var box_bd = div.getElementsByClassName("box-bd")[0];
 			box_bd.scrollTop = box_bd.scrollHeight - box_bd.offsetHeight;
 		}
+
+		function sendemoji() {
+			document.getElementById('emojidiv').style.display = 'block';
+		}
+		function insertemoji(a) {
+			document.getElementById('emojidiv').style.display = 'none';
+			var text = document.getElementsByClassName("text")[0];
+			text.innerHTML += a.innerHTML;
+		}
+
+		function sendimage() {
+			document.getElementById("imageFile").click();
+		}
+
+		document.getElementById("imageFile").addEventListener("change",function() {
+			if(this.value!=""){
+				var reader = new FileReader();
+				reader.readAsDataURL(this.files[0]);
+				reader.onload = function() {
+					var text = document.getElementsByClassName("text")[0];
+					var message = "{\"message\":[{\"type\":\"3\", \"message\":\""
+							+ reader.result
+							+ "\",\"name\":\""
+							+ name
+							+ "\",\"id\":\""
+							+ id
+							+ "\",\"receive\":\""
+							+ text.id
+							+ "\"}]}";
+					ws.send(message);
+					document.getElementById("imageFile").value = "";
+				}
+			}
+
+		})
 	</script>
 </body>
 </html>
