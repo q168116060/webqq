@@ -40,7 +40,7 @@ public class Register {
 	public Boolean insert() {
 		if(this.queryId()) {
 			db.connect();
-			sql = "insert into user values('"+id+"','"+name+"','"+password+"');";
+			sql = "insert into user values('"+id+"','"+name+"','"+password+"','null','null');";
 			int count = db.executeUpdate(sql);
 			if(count == 1)
 				db.disconnect();

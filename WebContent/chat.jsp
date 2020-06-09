@@ -1,10 +1,16 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ page import="webqq.SetUserinfo" %>
 <!DOCTYPE html>
 <html>
 <head>
 <%
-	request.setCharacterEncoding("UTF-8");
+request.setCharacterEncoding("UTF-8");
+String id = request.getParameter("id");
+String avatar = request.getParameter("avatar");
+String name = request.getParameter("name");
+SetUserinfo set = new SetUserinfo(id,avatar,name);
+
 %>
 <link rel="stylesheet" href="css/chat.css" />
 <style type="text/css">
@@ -15,7 +21,7 @@
 	border-radius: 50%;
 	margin-top: 10px;
 	margin-left: 10px;
-	background: url(img/a.png) center;
+	background: url(<%=avatar%>) center;
 	background-size: cover;
 }
 
@@ -37,7 +43,6 @@ a {
 </style>
 <script type="text/javascript">
 	window.onload = function() {
-		
 		var messageico = document.getElementById("messageico");
 		var message = document.getElementById("message");
 		var friendico = document.getElementById("friendico");
@@ -215,24 +220,35 @@ var ws = new WebSocket("ws://localhost:8080/webqq/WebSocket/"+id);
 					var id = json.message[i].id+"friend";
 					if(document.getElementById(id) == null && json.message[i].id!=<%=request.getParameter("id")%>){
 						friend_list_ul.innerHTML += "<li class=\"user\" onclick=\"creatdiv(this)\" id=\""+
-						id+"\"><div><img class=\"avatar\" src=\"img/a.png\" alt=\"\"><p class=\"friend-name\">"+
+						id+"\"><div><img class=\"avatar\" src=\""+
+						json.message[i].avatar+"\" alt=\"\"><p class=\"friend-name\">"+
 						json.message[i].name+"</p></div></li>";
 					}
 				}
 				setscroll(div1);
+
 			}else if(json.message[0].type == "1"){
 				if(json.message[0].receive == "grouptext"){
 					var div = document.getElementById("group");
+					if (div == null) {
+						document.getElementById("main").innerHTML = document.getElementById("main").innerHTML+"<div id=\"group\" class=\"chat\" style=\"display:none;\">\r\n" + 
+						"<div class=\"box-hd\"><h3>群聊</h3></div>\r\n" + 
+						"<div class=\"box-bd\">\r\n" + 
+						"</div>\r\n" + 
+						"</div>";
+						var div = document.getElementById("group");
+					}
 					var box_bd = div.getElementsByClassName("box-bd")[0];
 					if(json.message[0].name == "<%=request.getParameter("name")%>"){
 						box_bd.innerHTML = box_bd.innerHTML+"<div class=\"message-box\">\r\n" + 
-						"<div class=\"my message\"><img class=\"avatar\" src=\"img/a.png\" alt=\"\" />\r\n" + 
+						"<div class=\"my message\"><img class=\"avatar\" src=\"<%=avatar%>\" />\r\n" + 
 						"<div class=\"content\"><div class=\"bubble\"><div class=\"bubble_cont\">"+
 						json.message[0].message+
 						"</div></div></div>\r\n" + 
 						"</div></div>";
 					}else{
-						box_bd.innerHTML = box_bd.innerHTML+"<div class=\"message-box\"><div class=\"other message\"><img class=\"avatar\" src=\"img/a.png\" alt=\"\" />\r\n" + 
+						box_bd.innerHTML = box_bd.innerHTML+"<div class=\"message-box\"><div class=\"other message\"><img class=\"avatar\" src=\""+
+						getAvatarById(json.message[0].id)+"\"/>\r\n" + 
 						"<div class=\"content\"><div class=\"nickname\">"+
 						json.message[0].name+
 						"</div><div class=\"bubble\"><div class=\"bubble_cont\">"+
@@ -245,7 +261,8 @@ var ws = new WebSocket("ws://localhost:8080/webqq/WebSocket/"+id);
 					var message_list_li_p = message_list_li
 							.getElementsByClassName("message-content")[0];
 					message_list_li_p.innerHTML = json.message[0].message;
-					setscroll(div);
+
+
 				}else {
 					var receive = "<%=request.getParameter("id")%>"+"text";
 					if(receive == json.message[0].receive){
@@ -260,10 +277,18 @@ var ws = new WebSocket("ws://localhost:8080/webqq/WebSocket/"+id);
 							"<div class=\"box-bd\">\r\n" + 
 							"</div>\r\n" + 
 							"</div>";
+							
+							var chatdiv = document.getElementsByClassName("chat");
+							for (var i = 0; i < chatdiv.length; i++) {
+								setscroll(chatdiv[i]);
+							}
+							
+							
 						}
 						var div1 = document.getElementById(json.message[0].id+"div");
 						var box_bd = div1.getElementsByClassName("box-bd")[0];
-						box_bd.innerHTML = box_bd.innerHTML+"<div class=\"othermessage\"><div><img class=\"avatar\" src=\"img/a.png\" /></div><div><div class=\"left-triangle\"></div><span>"
+						box_bd.innerHTML = box_bd.innerHTML+"<div class=\"othermessage\"><div><img class=\"avatar\" src=\""+
+						getAvatarById(json.message[0].id)+"\" /></div><div><div class=\"left-triangle\"></div><span>"
 						+json.message[0].message+"</span></div>";
 						
 						var message_list_li_p = document.getElementById(json.message[0].id+"message");
@@ -271,7 +296,8 @@ var ws = new WebSocket("ws://localhost:8080/webqq/WebSocket/"+id);
 							var message_list = document.getElementById("message");
 							var message_list_ul = message_list.getElementsByTagName("ul")[0];
 							message_list_ul.innerHTML += "<li class=\"user\" onclick=\"setdisplay(this)\"><div>\r\n" + 
-							"<img class=\"avatar\" src=\"img/a.png\" alt=\"\" />\r\n" + 
+							"<img class=\"avatar\" src=\""+
+							getAvatarById(json.message[0].id)+"\" />\r\n" + 
 							"<p class=\"message-name\">"+
 							json.message[0].name+"</p>\r\n" + 
 							"<p class=\"message-content\" id=\""+
@@ -287,7 +313,9 @@ var ws = new WebSocket("ws://localhost:8080/webqq/WebSocket/"+id);
 						receive = receive.substring(0,receive.length-4);
 						var div1 = document.getElementById(receive+"div");
 						var box_bd = div1.getElementsByClassName("box-bd")[0];
-						box_bd.innerHTML = box_bd.innerHTML+"<div class=\"mymessage\"><div><img class=\"avatar\" src=\"img/a.png\" /></div><div><div class=\"right-triangle\"></div><span>"
+						box_bd.innerHTML = box_bd.innerHTML+"<div class=\"mymessage\"><div><img class=\"avatar\" src=\""+
+						"<%=avatar%>"
+						+"\" /></div><div><div class=\"right-triangle\"></div><span>"
 						+json.message[0].message+"</span></div>";
 						
 						var message_list_li_p = document.getElementById(receive+"message");
@@ -298,7 +326,8 @@ var ws = new WebSocket("ws://localhost:8080/webqq/WebSocket/"+id);
 							var message_list = document.getElementById("message");
 							var message_list_ul = message_list.getElementsByTagName("ul")[0];
 							message_list_ul.innerHTML += "<li class=\"user\" onclick=\"setdisplay(this)\"><div>\r\n" + 
-							"<img class=\"avatar\" src=\"img/a.png\" alt=\"\" />\r\n" + 
+							"<img class=\"avatar\" src=\""+
+							getAvatarById(receive)+"\"/>\r\n" + 
 							"<p class=\"message-name\">"+
 							name+"</p>\r\n" + 
 							"<p class=\"message-content\" id=\""+
@@ -355,13 +384,14 @@ var ws = new WebSocket("ws://localhost:8080/webqq/WebSocket/"+id);
 					var box_bd = div.getElementsByClassName("box-bd")[0];
 					if(json.message[0].name == "<%=request.getParameter("name")%>"){
 						box_bd.innerHTML = box_bd.innerHTML+"<div class=\"message-box\">\r\n" + 
-						"<div class=\"my message\"><img class=\"avatar\" src=\"img/a.png\" alt=\"\" />\r\n" + 
+						"<div class=\"my message\"><img class=\"avatar\" src=\"<%=avatar%>\" alt=\"\" />\r\n" + 
 						"<div class=\"content\"><div class=\"bubble\"><div class=\"bubble_cont\"><img src=\""+
 						json.message[0].message+"\"/>"+
 						"</div></div></div>\r\n" + 
 						"</div></div>";
 					}else{
-						box_bd.innerHTML = box_bd.innerHTML+"<div class=\"message-box\"><div class=\"other message\"><img class=\"avatar\" src=\"img/a.png\" alt=\"\" />\r\n" + 
+						box_bd.innerHTML = box_bd.innerHTML+"<div class=\"message-box\"><div class=\"other message\"><img class=\"avatar\" src=\""+
+						getAvatarById(json.message[0].id)+"\"/>\r\n" + 
 						"<div class=\"content\"><div class=\"nickname\">"+
 						json.message[0].name+
 						"</div><div class=\"bubble\"><div class=\"bubble_cont\"><img src=\""+
@@ -389,10 +419,16 @@ var ws = new WebSocket("ws://localhost:8080/webqq/WebSocket/"+id);
 							"<div class=\"box-bd\">\r\n" + 
 							"</div>\r\n" + 
 							"</div>";
+							
+							var chatdiv = document.getElementsByClassName("chat");
+							for (var i = 0; i < chatdiv.length; i++) {
+								setscroll(chatdiv[i]);
+							}
 						}
 						var div1 = document.getElementById(json.message[0].id+"div");
 						var box_bd = div1.getElementsByClassName("box-bd")[0];
-						box_bd.innerHTML = box_bd.innerHTML+"<div class=\"othermessage\"><div><img class=\"avatar\" src=\"img/a.png\" /></div>"+
+						box_bd.innerHTML = box_bd.innerHTML+"<div class=\"othermessage\"><div><img class=\"avatar\" src=\""+
+						getAvatarById(json.message[0].id)+"\" /></div>"+
 						"<div><div class=\"left-triangle\"></div><span><img style=\"max-width: 350px;max-height: 240px;\" src=\""+
 						json.message[0].message+"\"/>"+"</span></div>";
 						
@@ -401,7 +437,8 @@ var ws = new WebSocket("ws://localhost:8080/webqq/WebSocket/"+id);
 							var message_list = document.getElementById("message");
 							var message_list_ul = message_list.getElementsByTagName("ul")[0];
 							message_list_ul.innerHTML += "<li class=\"user\" onclick=\"setdisplay(this)\"><div>\r\n" + 
-							"<img class=\"avatar\" src=\"img/a.png\" alt=\"\" />\r\n" + 
+							"<img class=\"avatar\" src=\""+
+							getAvatarById(json.message[0].id)+"\"/>\r\n" + 
 							"<p class=\"message-name\">"+
 							json.message[0].name+"</p>\r\n" + 
 							"<p class=\"message-content\" id=\""+
@@ -418,7 +455,9 @@ var ws = new WebSocket("ws://localhost:8080/webqq/WebSocket/"+id);
 						var div1 = document.getElementById(receive + "div");
 						var box_bd = div1.getElementsByClassName("box-bd")[0];
 						box_bd.innerHTML = box_bd.innerHTML
-								+ "<div class=\"mymessage\"><div><img class=\"avatar\" src=\"img/a.png\" /></div><div><div class=\"right-triangle\"></div><span><img style=\"max-width: 350px;max-height: 240px;\" src=\""+
+								+ "<div class=\"mymessage\"><div><img class=\"avatar\" src=\""+
+								"<%=avatar%>"
+								+"\" /></div><div><div class=\"right-triangle\"></div><span><img style=\"max-width: 350px;max-height: 240px;\" src=\""+
 								json.message[0].message+"\"/>"+ "</span></div>";
 
 						var message_list_li_p = document.getElementById(receive
@@ -434,7 +473,8 @@ var ws = new WebSocket("ws://localhost:8080/webqq/WebSocket/"+id);
 							var message_list_ul = message_list
 									.getElementsByTagName("ul")[0];
 							message_list_ul.innerHTML += "<li class=\"user\" onclick=\"setdisplay(this)\"><div>\r\n"
-									+ "<img class=\"avatar\" src=\"img/a.png\" alt=\"\" />\r\n"
+									+ "<img class=\"avatar\" src=\""+
+									getAvatarById(receive)+"\"/>\r\n"
 									+ "<p class=\"message-name\">"
 									+ name
 									+ "</p>\r\n"
@@ -551,6 +591,15 @@ var ws = new WebSocket("ws://localhost:8080/webqq/WebSocket/"+id);
 			}
 
 		})
+		
+		function getAvatarById(id){
+			id=id+"friend";
+			var li = document.getElementById(id);
+			var img = li.getElementsByClassName("avatar")[0];
+			return img.src;
+			
+		}
+		
 	</script>
 </body>
 </html>
