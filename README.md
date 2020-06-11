@@ -1,4 +1,4 @@
-已部署到腾讯云服务器：[超链接] (175.24.97.95/webqq)  
+已部署到腾讯云服务器：[超链接](175.24.97.95/webqq)
 ## 6.1
 学习了解了websocket，对实验整体进行了初步规划；  
 ## 6.2
@@ -29,3 +29,6 @@
 16.新增未读消息提醒功能，在头像上显示小红点；  
 17.新增点击接受到的图片，放大查看功能；  
 18.整个项目已完结，为整个项目的关键代码增加必要说明。  
+## 界面截图
+![Image](https://github.com/q168116060/webqq/blob/master/screenshots/1.jpg)
+![Image](https://github.com/q168116060/webqq/blob/master/screenshots/2.jpg)
