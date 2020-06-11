@@ -1,0 +1,5 @@
+create table user(id varchar(11) primary key,
+name varchar(11),
+password varchar(11),
+avatar mediumtext
+) ENGINE=InnoDB DEFAULT CHARSET=gbk;

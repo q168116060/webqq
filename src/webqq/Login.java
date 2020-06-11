@@ -16,6 +16,8 @@ public class Login {
 	public String getName() {
 		return name;
 	}
+	
+	//如果用户没有设置头像，返回默认头像
 	public String getAvatar() {
 		if(avatar.equals("null")) {
 			return "img/a.png";
@@ -27,10 +29,10 @@ public class Login {
 		this.id=id;
 		this.password=password;
 	}
-	
+	//查询用户是否存在
 	public Boolean queryId() {
 		db.connect();
-		sql = "select id from user where id = "+id+";";
+		sql = "select id from user where id = '"+id+"';";
 		rs = db.executeQuery(sql);
 		try {
 			rs.last();
@@ -47,7 +49,7 @@ public class Login {
 		return false;
 	}
 	
-	
+	//根据账号和密码查昵称，查到则登陆成功
 	public Boolean queryName() {
 		db.connect();
 		sql = "select name , avatar from user where id = '"+id+"' AND password = '"+password+"';";

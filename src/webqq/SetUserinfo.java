@@ -12,17 +12,17 @@ public class SetUserinfo {
 	DbProcess db = new DbProcess();
 	
 
-	
+
 	public SetUserinfo(String id,String avatar,String name) {
 		this.id=id;
 		this.avatar=avatar;
 		this.name=name;
 		update();
 	}
-	
+	//更新用户信息
 	public void update() {
 		db.connect();
-		sql = "update user set avatar = '"+avatar+"',name = '"+name+"' where id = "+id+";";
+		sql = "update user set avatar = '"+avatar+"',name = '"+name+"' where id = '"+id+"';";
 		int i = db.executeUpdate(sql);
 		db.disconnect();
 		if(i == 1) {

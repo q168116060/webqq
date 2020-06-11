@@ -13,6 +13,7 @@ margin: 30px auto 20px auto;
 <title>登录页面</title>
 </head>
 <body>
+<!--对注册页的账号密码进行获取，自动填入登录页对应的文本框中-->
 <%
 String id = request.getParameter("id");
 String password = request.getParameter("password");
@@ -34,6 +35,7 @@ if(password == null){
 </div>
 
 <script type="text/javascript">
+<!--登录输入框判空-->
 function check() {
 	var id = document.getElementById("id").value;
 	var password = document.getElementById("password").value;

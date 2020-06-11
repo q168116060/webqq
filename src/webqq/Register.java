@@ -17,9 +17,11 @@ public class Register {
 		this.name=name;
 		this.password=password;
 	}
+	
+	//查账号存不存在，不存在才允许注册
 	public Boolean queryId() {
 		db.connect();
-		sql = "select id from user where id = "+id+";";
+		sql = "select id from user where id = '"+id+"';";
 		rs = db.executeQuery(sql);
 		try {
 			rs.last();
@@ -36,7 +38,7 @@ public class Register {
 		return false;
 	}
 	
-	
+	//判断账号是否存在，注册成功写进数据库
 	public Boolean insert() {
 		if(this.queryId()) {
 			db.connect();

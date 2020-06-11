@@ -28,6 +28,7 @@ if(i){
 %>
 <div>
 <h3>注册成功！</h3>
+<!--隐藏输入框向登录页传数据，实现自动填写-->
 <form action="login.jsp" method="post">
 <input type="hidden" name="id" value=<%=id%>>
 <input type="hidden" name="password" value=<%=password%>>
